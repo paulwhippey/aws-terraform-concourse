@@ -1,0 +1,21 @@
+---
+name: Detect Secrets
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - edited
+      - synchronize
+jobs:
+  terraform:
+    name: Trufflehog scan
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        ref: ${{ github.head_ref }}
+    - name: trufflehog-actions-scan
+      uses: edplato/trufflehog-actions-scan@master
+      
