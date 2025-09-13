@@ -1,0 +1,12 @@
+region      = "" # an aws region
+root_domain = "concourse.example.com"
+concourse_credential = {
+  web = {
+    username = "test"
+    passwrod = "test"
+  }
+  db = {
+    username = "testdb"
+    passwrod = "testdbpassword"
+  }
+}

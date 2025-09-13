@@ -1,0 +1,5 @@
+---
+name: default
+inputs:
+- name: web_url
+  type: string

@@ -1,0 +1,17 @@
+region      = "" # an aws region
+root_domain = "concourse.example.com"
+concourse_credential = {
+  web = {
+    username = "test"
+    passwrod = "test"
+  }
+  db = {
+    username = "testdb"
+    passwrod = "testdbpassword"
+  }
+}
+cidr = {
+  vpc     = "10.0.0.0/16"
+  private = ["10.0.0.0/24", "10.0.1.0/24", "10.0.2.0/24"]
+  public  = ["10.0.100.0/24", "10.0.101.0/24", "10.0.102.0/24"]
+}

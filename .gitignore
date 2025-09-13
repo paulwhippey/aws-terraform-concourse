@@ -1,0 +1,28 @@
+**/.idea/
+**/.terraform/
+
+**/*.tfvars
+**/*.tfstate
+**/*.tfstate*
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# tfvars files
+terraform.tfvars
+
+# Crash log files
+crash.log
+
+
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+modules/logging/logging.json
+
+# MacOS System Files
+.DS_Store

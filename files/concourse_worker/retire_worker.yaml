@@ -1,0 +1,46 @@
+description: |-
+  ### Document name - concourse-worker-shutdown
+
+  ## What does this document do?
+  This will switch the worker to retiring state, and Concourse will stop scheduling new tasks on it.
+  When all tasks running on the worker have finished, the worker will be removed from the ASG.
+
+  ## Input Parameters
+  None.
+
+  ## Output Parameters
+  None.
+
+schemaVersion: '2.2'
+mainSteps:
+- action: aws:runShellScript
+  name: KillProcess
+  precondition:
+    StringEquals:
+    - platformType
+    - Linux
+  inputs:
+    maxAttempts: 1
+
+    timeoutSeconds: 7200
+    runCommand:
+    - |
+      #!/bin/bash
+
+      export INSTANCE_ID=$(curl --silent http://169.254.169.254/latest/meta-data/instance-id)
+      export INSTANCE_REGION=$(curl --silent http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region)
+
+      export CONCOURSE_PID=$(pidof concourse)
+
+      # Kill using a SIGUSR2, indicating to Concourse to retire the node.
+      kill -s SIGUSR2 $CONCOURSE_PID || { echo "No process matching $CONCOURSE_PID found. Exiting..." ; exit 1 ;}
+
+      # Wait for the process to finish. i.e. all tasks have finished.
+      tail --pid=$CONCOURSE_PID -f /dev/null
+
+      # Notify autoscaling that it's safe to terminate the instance.
+      aws autoscaling complete-lifecycle-action --lifecycle-action-result CONTINUE \
+        --region "$INSTANCE_REGION" \
+        --instance-id "$INSTANCE_ID" \
+        --lifecycle-hook-name "${lifecycle_hook_name}" \
+        --auto-scaling-group-name "${auto_scaling_group_name}"
