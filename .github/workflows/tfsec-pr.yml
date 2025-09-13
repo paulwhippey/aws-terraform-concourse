@@ -1,0 +1,21 @@
+---
+name: Terraform security scan
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - edited
+      - synchronize
+jobs:
+  tfsec:
+    name: tfsec
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+      - name: tfsec
+        uses: aquasecurity/tfsec-action@v1.0.0
+        
